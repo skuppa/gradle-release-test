@@ -1,0 +1,56 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "net.researchgate:gradle-release:2.1.1"
+    }
+}
+
+apply plugin: 'net.researchgate.release'
+
+release {
+    failOnCommitNeeded = true
+    failOnPublishNeeded = true
+    failOnSnapshotDependencies = true
+    failOnUnversionedFiles = true
+    failOnUpdateNeeded = true
+    revertOnFail = true
+    preCommitText = ''
+    preTagCommitMessage = '[Release] - pre tag commit: '
+    tagCommitMessage = '[Release] - creating tag: '
+    newVersionCommitMessage = '[Release] - new version commit: '
+    tagTemplate = '${version}'
+    versionPropertyFile = 'gradle.properties'
+    versionProperties = []
+    scmAdapters = [GitAdapter]
+
+    git {
+        requireBranch = 'master'
+        pushToRemote = 'origin'
+        pushToCurrentBranch = false
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse-wtp'
+
+    repositories {
+       mavenCentral()
+    }
+
+    dependencies {
+        testCompile 'junit:junit:4.11'
+    }
+
+    version = '1.0'
+
+    jar {
+        manifest.attributes provider: 'gradle'
+    }
+}
